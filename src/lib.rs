@@ -1,4 +1,6 @@
-pub mod bipartite;
+mod bipartite;
+pub mod algorithms;
+pub mod directed_hypergraphs;
 
 pub fn add(left: u64, right: u64) -> u64 {
     left + right
