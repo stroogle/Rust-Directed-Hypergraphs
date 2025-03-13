@@ -1,3 +1,6 @@
 pub mod interface;
-pub mod bfs;
-pub mod dfs;
+mod bfs;
+mod dfs;
+
+pub use bfs::bfs;
+pub use dfs::dfs;
