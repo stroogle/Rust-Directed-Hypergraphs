@@ -45,17 +45,25 @@ impl<T: PartialEq + PartialOrd> From<LaplacianDirectedHypergraph<T>> for Descrip
 
 impl<T: PartialEq + PartialOrd> Graph for DescriptiveDirectedHypergraph<T> {
     fn get_neighbors(&self, node_index: usize) -> Vec<usize> {
-        let mut set_results: HashSet<usize> = HashSet::new();
+        if node_index < self.nodes.len() {
+            let mut set_results: HashSet<usize> = HashSet::new();
 
-        for arc in self.arcs.iter() {
-            if arc.head.contains(&node_index) {
-                set_results.extend(arc.head.clone());
+            for (index, arc) in self.arcs.iter().enumerate() {
+                if arc.head.contains(&node_index) {
+                    set_results.insert(index + self.nodes.len());
+                }
             }
+
+            let results: Vec<usize> = set_results.into_iter().collect();
+
+            results
+        } else {
+            let real_index = node_index - self.nodes.len();
+            let results: Vec<usize> = self.arcs[real_index].tail.clone().into_iter().collect();
+
+            results
         }
-
-        let results: Vec<usize> = set_results.into_iter().collect();
-
-        results
+        
     }
 
     fn count_out_degrees(&self, node_index: usize) -> usize {
@@ -67,6 +75,6 @@ impl<T: PartialEq + PartialOrd> Graph for DescriptiveDirectedHypergraph<T> {
     }
 
     fn node_count(&self) -> usize {
-        self.nodes.len()
+        self.nodes.len() + self.arcs.len()
     }
 }
