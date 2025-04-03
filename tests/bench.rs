@@ -7,7 +7,9 @@ mod tests {
     use rust_hypergraph::{
         directed_hypergraphs::{
             DirectedBipartiteGraph,
-            LaplacianDirectedHypergraph
+            LaplacianDirectedHypergraph,
+            DescriptiveDirectedHypergraph,
+            BFDirectedHypergraph
         },
         algorithms::{
             dfs,
@@ -62,7 +64,16 @@ mod tests {
 
         let h = LaplacianDirectedHypergraph::new(g);
 
-        println!("Laplacian: {:?}", dfs_runner(50, &h));
+        println!("Laplacian: {:?}", dfs_runner(1, &h));
+
+        let j = DescriptiveDirectedHypergraph::from(h);
+
+        println!("Descriptive: {:?}", dfs_runner(1, &j));
+
+        let k = BFDirectedHypergraph::from(j);
+
+        println!("BF-Graph: {:?}", dfs_runner(1, &k));
+
 
     }
 
