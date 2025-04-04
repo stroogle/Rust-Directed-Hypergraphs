@@ -43,36 +43,49 @@ mod tests {
     #[test]
     fn bench_dfs() {
 
-        let content = fs::read_to_string("./test.json").expect("Failed to read.");
+        let paths = fs::read_dir("./data/highly_connected").unwrap();
 
-        let i: Input = serde_json::from_str(&content).unwrap();
+        for path in paths {
+            let file = path.unwrap().file_name().into_string().unwrap();
 
-        let left_nodes: Vec<Node<usize>> = (0..i.left_to_right_edges.len())
-        .map(|value| Node {value})
-        .collect();
+            println!("{}", file);
 
-        let start = i.left_to_right_edges.len();
+            let content = fs::read_to_string(
+                format!("./data/highly_connected/{}", file))
+                .expect("Failed to read."
+            );
 
-        let right_nodes: Vec<Node<usize>> = (start..(start+i.right_to_left_edges.len()))
-        .map(|value| Node {value})
-        .collect();
+            let i: Vec<Vec<Vec<usize>>> = serde_json::from_str(&content).unwrap();
 
-        let g = DirectedBipartiteGraph::new(left_nodes, right_nodes, i.left_to_right_edges, i.right_to_left_edges)
-        .unwrap();
+            let left_nodes: Vec<Node<usize>> = (0..i[0].len())
+            .map(|value| Node {value})
+            .collect();
 
-        println!("Bipartite: {:?}", dfs_runner(50, &g));
+            let start = i[0].len();
 
-        let h = LaplacianDirectedHypergraph::new(g);
+            let right_nodes: Vec<Node<usize>> = (start..(start+i[1].len()))
+            .map(|value| Node {value})
+            .collect();
 
-        println!("Laplacian: {:?}", dfs_runner(1, &h));
+            let g = DirectedBipartiteGraph::new(left_nodes, right_nodes, i[0].clone(), i[1].clone())
+            .unwrap();
 
-        let j = DescriptiveDirectedHypergraph::from(h);
+            println!("Bipartite: {:?}", dfs_runner(50, &g));
 
-        println!("Descriptive: {:?}", dfs_runner(1, &j));
+            let h = LaplacianDirectedHypergraph::new(g);
 
-        let k = BFDirectedHypergraph::from(j);
+            println!("Laplacian: {:?}", dfs_runner(1, &h));
 
-        println!("BF-Graph: {:?}", dfs_runner(1, &k));
+            let j = DescriptiveDirectedHypergraph::from(h);
+
+            println!("Descriptive: {:?}", dfs_runner(1, &j));
+
+            let k = BFDirectedHypergraph::from(j);
+
+            println!("BF-Graph: {:?}", dfs_runner(1, &k));
+        }
+
+        
 
 
     }
