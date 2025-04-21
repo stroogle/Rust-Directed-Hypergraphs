@@ -11,10 +11,6 @@ serde_json = "1.0.40"
 criterion = "0.5.1"
 
 [[bench]]
-name = "bipartite_bench"
-harness = false
-
-[[bench]]
 name = "dfs_bench"
 harness = false
 

@@ -1,23 +1,42 @@
 use criterion::{
-    black_box,
     criterion_group,
     criterion_main,
-    Criterion
+    Criterion,
+    BenchmarkId
 };
-use rust_hypergraph::directed_hypergraphs::DirectedBipartiteGraph;
-use rust_hypergraph::algorithms::dfs;
-use rust_hypergraph::Node;
-use serde::{Deserialize, Serialize};
+use rust_hypergraph::{
+    directed_hypergraphs::{
+        DirectedBipartiteGraph,
+        LaplacianDirectedHypergraph,
+        DescriptiveDirectedHypergraph,
+        BFDirectedHypergraph
+    },
+    algorithms::bfs,
+    Node
+};
 use std::fs;
 
-pub fn criterion_benchmark(c: &mut Criterion) {
-    let paths = fs::read_dir("./benches/data/balanced").unwrap();
+pub fn get_file_names(folder: &str) -> Vec<String> {
+    let mut files: Vec<String> = Vec::new();
+
+    let dir = format!("./benches/data/{}", folder);
+    let paths = fs::read_dir(dir).unwrap();
 
     for path in paths {
         let file = path.unwrap().file_name().into_string().unwrap();
+        files.push(file);
+    }
 
+    files
+}
+
+pub fn run_benchmarks(folder_name: &str, group_name: &str, c: &mut Criterion) {
+    let files = get_file_names(&folder_name);
+    let mut group = c.benchmark_group(group_name);
+
+    for (index, file) in files.iter().enumerate() {
         let content = fs::read_to_string(
-            format!("./benches/data/balanced/{}", file))
+            format!("./benches/data/{}/{}", folder_name, file))
             .expect("Failed to read."
         );
 
@@ -36,13 +55,59 @@ pub fn criterion_benchmark(c: &mut Criterion) {
         let g = DirectedBipartiteGraph::new(left_nodes, right_nodes, i[0].clone(), i[1].clone())
         .unwrap();
 
-        c.bench_function(
-        "dfs on bipartite",
-        |b| b.iter(|| dfs(black_box(&g), 0))
+        group.bench_with_input(
+            BenchmarkId::new("bipartite", format!("Graph #{}", index)),
+            &g,
+            |b, g| b.iter(|| bfs(g, 0))
+        );
+
+        let h = LaplacianDirectedHypergraph::new(g);
+
+        group.bench_with_input(
+            BenchmarkId::new("laplacian", format!("Graph #{}", index)),
+            &h,
+            |b, h| b.iter(|| bfs(h, 0))
+        );
+
+        let j = DescriptiveDirectedHypergraph::from(h);
+
+        group.bench_with_input(
+            BenchmarkId::new("Descriptive", format!("Graph #{}", index)),
+            &j,
+            |b, j| b.iter(|| bfs(j, 0))
+        );
+
+        let k = BFDirectedHypergraph::from(j);
+
+        group.bench_with_input(
+            BenchmarkId::new("BF", format!("Graph #{}", index)),
+            &k,
+            |b, k| b.iter(|| bfs(k, 0))
         );
     }
-//  todo!()
 }
 
-criterion_group!(benches, criterion_benchmark);
+pub fn balanced_bfs_benchmark(c: &mut Criterion) {
+    run_benchmarks("balanced", "balanced_bfs", c);
+}
+
+pub fn high_bfs_benchmark(c: &mut Criterion) {
+    run_benchmarks("high", "high_bfs", c);
+}
+
+pub fn med_bfs_benchmark(c: &mut Criterion) {
+    run_benchmarks("medium", "med_bfs", c);
+}
+
+pub fn low_bfs_benchmark(c: &mut Criterion) {
+    run_benchmarks("low", "low_bfs", c);
+}
+
+criterion_group!(
+    benches,
+    balanced_bfs_benchmark,
+    high_bfs_benchmark,
+    med_bfs_benchmark,
+    low_bfs_benchmark
+);
 criterion_main!(benches);
