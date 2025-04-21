@@ -13,3 +13,11 @@ criterion = "0.5.1"
 [[bench]]
 name = "bipartite_bench"
 harness = false
+
+[[bench]]
+name = "dfs_bench"
+harness = false
+
+[[bench]]
+name = "bfs_bench"
+harness = false
