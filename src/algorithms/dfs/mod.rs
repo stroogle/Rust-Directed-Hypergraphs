@@ -1,6 +1,6 @@
 use crate::algorithms::interface::Graph;
 
-pub fn dfs(graph: &dyn Graph, start_node_index: usize) -> i32 {
+pub fn dfs(graph: &dyn Graph, start_node_index: usize) -> usize {
     let node_count: usize = graph.node_count();
 
     let mut visited: Vec<bool> = vec![false; node_count];
@@ -22,5 +22,9 @@ pub fn dfs(graph: &dyn Graph, start_node_index: usize) -> i32 {
 
     }
 
-    1
+    visited
+    .iter()
+    .filter(|value| **value)
+    .collect::<Vec<&bool>>()
+    .len()
 }
