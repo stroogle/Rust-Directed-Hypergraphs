@@ -17,7 +17,7 @@ impl<T: PartialEq + PartialOrd> From<DescriptiveDirectedHypergraph<T>> for BFDir
 
         for (index, arc) in value.arcs.iter().enumerate() {
 
-            let dummy_node_index = value.nodes.len() + index;
+            let dummy_node_index = value.nodes.len ()+ index;
 
             let mut dummy_set: HashSet<usize> = HashSet::new();
 
@@ -66,6 +66,6 @@ impl<T: PartialEq + PartialOrd> Graph for BFDirectedHypergraph<T> {
     }
 
     fn node_count(&self) -> usize {
-        self.nodes.len()
+        self.nodes.len() + self.arcs.len()
     }
 }
