@@ -48,7 +48,7 @@ impl<T: PartialEq + PartialOrd> Graph for BFDirectedHypergraph<T> {
 
         for arc in self.arcs.iter() {
             if arc.head.contains(&node_index) {
-                set_results.extend(arc.head.clone());
+                set_results.extend(arc.tail.clone());
             }
         }
 
