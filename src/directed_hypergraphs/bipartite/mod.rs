@@ -110,7 +110,7 @@ impl<T: PartialEq + PartialOrd> Graph for DirectedBipartiteGraph<T> {
         self.get_out_neighbours(node_index).len()
     }
 
-    fn count_in_degrees(&self, node_index: usize) -> usize {
+    fn count_in_degrees(&self, _node_index: usize) -> usize {
         todo!()
     }
 

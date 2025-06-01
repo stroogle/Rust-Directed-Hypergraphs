@@ -8,3 +8,9 @@ impl<T: PartialEq> PartialEq for Node<T> {
         self.value == other.value
     }
 }
+
+impl<T: Clone> Clone for Node<T> {
+    fn clone(&self) -> Self {
+        Self { value: self.value.clone() }
+    }
+}

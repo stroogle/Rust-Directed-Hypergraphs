@@ -1,4 +1,4 @@
-use std::{collections::HashSet, hash::Hash};
+use std::{collections::HashSet};
 
 use crate::{algorithms::interface::Graph, Node, HyperArc};
 
@@ -17,7 +17,7 @@ impl<T: PartialEq + PartialOrd> From<DescriptiveDirectedHypergraph<T>> for BFDir
 
         for (index, arc) in value.arcs.iter().enumerate() {
 
-            let dummy_node_index = value.nodes.len() + index;
+            let dummy_node_index = value.nodes.len ()+ index;
 
             let mut dummy_set: HashSet<usize> = HashSet::new();
 
@@ -47,7 +47,7 @@ impl<T: PartialEq + PartialOrd> Graph for BFDirectedHypergraph<T> {
         let mut set_results: HashSet<usize> = HashSet::new();
 
         for arc in self.arcs.iter() {
-            if arc.head.contains(&node_index) {
+            if arc.tail.contains(&node_index) {
                 set_results.extend(arc.head.clone());
             }
         }
@@ -57,15 +57,15 @@ impl<T: PartialEq + PartialOrd> Graph for BFDirectedHypergraph<T> {
         results
     }
 
-    fn count_out_degrees(&self, node_index: usize) -> usize {
+    fn count_out_degrees(&self, _node_index: usize) -> usize {
         todo!()
     }
 
-    fn count_in_degrees(&self, node_index: usize) -> usize {
+    fn count_in_degrees(&self, _node_index: usize) -> usize {
         todo!()
     }
 
     fn node_count(&self) -> usize {
-        self.nodes.len()
+        self.nodes.len() + self.arcs.len()
     }
 }
