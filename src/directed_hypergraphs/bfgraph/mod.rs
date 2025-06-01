@@ -1,4 +1,4 @@
-use std::{collections::HashSet, hash::Hash};
+use std::{collections::HashSet};
 
 use crate::{algorithms::interface::Graph, Node, HyperArc};
 
@@ -57,11 +57,11 @@ impl<T: PartialEq + PartialOrd> Graph for BFDirectedHypergraph<T> {
         results
     }
 
-    fn count_out_degrees(&self, node_index: usize) -> usize {
+    fn count_out_degrees(&self, _node_index: usize) -> usize {
         todo!()
     }
 
-    fn count_in_degrees(&self, node_index: usize) -> usize {
+    fn count_in_degrees(&self, _node_index: usize) -> usize {
         todo!()
     }
 

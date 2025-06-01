@@ -1,7 +1,7 @@
 use std::collections::{HashSet, HashMap};
 
 use crate::{algorithms::interface::Graph, HyperArc, Node};
-use super::LaplacianDirectedHypergraph;
+use super::DescriptiveDirectedHypergraph;
 
 pub struct BidirectionalHashMap<T> {
     pub nodes: Vec<Node<T>>,
@@ -10,8 +10,8 @@ pub struct BidirectionalHashMap<T> {
     pub heads: HashMap<usize, HashSet<usize>>
 }
 
-impl<T: PartialEq + PartialOrd> From<LaplacianDirectedHypergraph<T>> for BidirectionalHashMap<T> {
-    fn from(value: LaplacianDirectedHypergraph<T>) -> Self {
+impl<T: PartialEq + PartialOrd> From<DescriptiveDirectedHypergraph<T>> for BidirectionalHashMap<T> {
+    fn from(value: DescriptiveDirectedHypergraph<T>) -> Self {
 
         let mut arcs: Vec<HyperArc> = vec![];
 
@@ -47,24 +47,35 @@ impl<T: PartialEq + PartialOrd> From<LaplacianDirectedHypergraph<T>> for Bidirec
 
 impl<T: PartialEq + PartialOrd> Graph for BidirectionalHashMap<T> {
     fn get_neighbors(&self, node_index: usize) -> Vec<usize> {
-        if node_index < self.nodes.len() {
-            let mut set_results: HashSet<usize> = HashSet::new();
 
-            for (index, arc) in self.arcs.iter().enumerate() {
-                if arc.head.contains(&node_index) {
-                    set_results.insert(index + self.nodes.len());
-                }
-            }
+        let results: Vec<usize>;
 
-            let results: Vec<usize> = set_results.into_iter().collect();
-
+        if self.tails.contains(node_index) {
+            results = self.tails.get(&node_index).into_iter().collect();
             results
         } else {
-            let real_index = node_index - self.nodes.len();
-            let results: Vec<usize> = self.arcs[real_index].tail.clone().into_iter().collect();
-
+            results = self.heads.get(&node_index).into_iter().collect();
             results
         }
+
+        // if node_index < self.nodes.len() {
+        //     let mut set_results: HashSet<usize> = HashSet::new();
+
+        //     for (index, arc) in self.arcs.iter().enumerate() {
+        //         if arc.head.contains(&node_index) {
+        //             set_results.insert(index + self.nodes.len());
+        //         }
+        //     }
+
+        //     let results: Vec<usize> = set_results.into_iter().collect();
+
+        //     results
+        // } else {
+        //     let real_index = node_index - self.nodes.len();
+        //     let results: Vec<usize> = self.arcs[real_index].tail.clone().into_iter().collect();
+
+        //     results
+        // }
         
     }
 

@@ -14,16 +14,14 @@ impl<T: PartialEq + PartialOrd> From<LaplacianDirectedHypergraph<T>> for Descrip
         let mut arcs: Vec<HyperArc> = vec![];
 
         for arc in value.matrix.iter() {
-            let head: HashSet<usize>;
-            let tail: HashSet<usize>;
-
-            head = arc.iter()
+        
+            let head: HashSet<usize> = arc.iter()
             .enumerate()
             .filter(|(_, value)| **value == 1)
             .map(|(index, _)| index)
             .collect();
 
-            tail = arc.iter()
+            let tail: HashSet<usize> = arc.iter()
             .enumerate()
             .filter(|(_, value)| **value == 2)
             .map(|(index, _)| index)
@@ -66,11 +64,11 @@ impl<T: PartialEq + PartialOrd> Graph for DescriptiveDirectedHypergraph<T> {
         
     }
 
-    fn count_out_degrees(&self, node_index: usize) -> usize {
+    fn count_out_degrees(&self, _node_index: usize) -> usize {
         todo!()
     }
 
-    fn count_in_degrees(&self, node_index: usize) -> usize {
+    fn count_in_degrees(&self, _node_index: usize) -> usize {
         todo!()
     }
 
