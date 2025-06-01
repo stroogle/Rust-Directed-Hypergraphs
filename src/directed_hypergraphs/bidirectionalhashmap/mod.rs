@@ -1,4 +1,4 @@
-use std::collections::{HashSet, HashMap};
+use std::collections::{HashMap, HashSet};
 
 use crate::{algorithms::interface::Graph, HyperArc, Node};
 use super::DescriptiveDirectedHypergraph;
@@ -13,35 +13,39 @@ pub struct BidirectionalHashMap<T> {
 impl<T: PartialEq + PartialOrd> From<DescriptiveDirectedHypergraph<T>> for BidirectionalHashMap<T> {
     fn from(value: DescriptiveDirectedHypergraph<T>) -> Self {
 
-        let mut arcs: Vec<HyperArc> = vec![];
+        let mut tails: HashMap<usize, HashSet<usize>> = HashMap::new();
+        let mut heads: HashMap<usize, HashSet<usize>> = HashMap::new();
 
-        for arc in value.matrix.iter() {
-            let head: HashSet<usize>;
-            let tail: HashSet<usize>;
+        for (index, arc) in value.arcs.iter().enumerate() {
+            let dummy_node_index = value.nodes.len() + index;
 
-            head = arc.iter()
-            .enumerate()
-            .filter(|(_, value)| **value == 1)
-            .map(|(index, _)| index)
-            .collect();
+            heads.insert(dummy_node_index, HashSet::new());
 
-            tail = arc.iter()
-            .enumerate()
-            .filter(|(_, value)| **value == 2)
-            .map(|(index, _)| index)
-            .collect();
+            for node in &arc.tail {
+                if !tails.contains_key(node) {
+                    tails.insert(*node, HashSet::new());
+                }
 
+                if let Some(v) = tails.get_mut(node) {
+                    v.insert(dummy_node_index);
+                }
+            }
 
-            arcs.push(HyperArc {
-                head,
-                tail
-            })
+            for node in &arc.head {
+                if let Some(v) = heads.get_mut(&dummy_node_index) {
+                    v.insert(*node);
+                }
+            }
         }
+
 
         Self {
             nodes: value.nodes,
-            arcs
+            arcs: value.arcs,
+            tails,
+            heads
         }
+        
     }
 }
 
@@ -50,40 +54,28 @@ impl<T: PartialEq + PartialOrd> Graph for BidirectionalHashMap<T> {
 
         let results: Vec<usize>;
 
-        if self.tails.contains(node_index) {
-            results = self.tails.get(&node_index).into_iter().collect();
+        if self.tails.contains_key(&node_index) {
+            // results = self.tails.get(&node_index).into_iter().collect();
+            results = match self.tails.get(&node_index) {
+                Some(v) => v.clone().into_iter().collect(),
+                _ => Vec::new()
+            };
             results
         } else {
-            results = self.heads.get(&node_index).into_iter().collect();
+            results = match self.heads.get(&node_index) {
+                Some(v) => v.clone().into_iter().collect(),
+                _ => Vec::new()
+            };
             results
         }
-
-        // if node_index < self.nodes.len() {
-        //     let mut set_results: HashSet<usize> = HashSet::new();
-
-        //     for (index, arc) in self.arcs.iter().enumerate() {
-        //         if arc.head.contains(&node_index) {
-        //             set_results.insert(index + self.nodes.len());
-        //         }
-        //     }
-
-        //     let results: Vec<usize> = set_results.into_iter().collect();
-
-        //     results
-        // } else {
-        //     let real_index = node_index - self.nodes.len();
-        //     let results: Vec<usize> = self.arcs[real_index].tail.clone().into_iter().collect();
-
-        //     results
-        // }
         
     }
 
-    fn count_out_degrees(&self, node_index: usize) -> usize {
+    fn count_out_degrees(&self, _node_index: usize) -> usize {
         todo!()
     }
 
-    fn count_in_degrees(&self, node_index: usize) -> usize {
+    fn count_in_degrees(&self, _node_index: usize) -> usize {
         todo!()
     }
 
