@@ -47,8 +47,8 @@ impl<T: PartialEq + PartialOrd> Graph for BFDirectedHypergraph<T> {
         let mut set_results: HashSet<usize> = HashSet::new();
 
         for arc in self.arcs.iter() {
-            if arc.head.contains(&node_index) {
-                set_results.extend(arc.tail.clone());
+            if arc.tail.contains(&node_index) {
+                set_results.extend(arc.head.clone());
             }
         }
 

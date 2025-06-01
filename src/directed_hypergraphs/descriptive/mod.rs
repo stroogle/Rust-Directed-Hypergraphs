@@ -49,7 +49,7 @@ impl<T: PartialEq + PartialOrd> Graph for DescriptiveDirectedHypergraph<T> {
             let mut set_results: HashSet<usize> = HashSet::new();
 
             for (index, arc) in self.arcs.iter().enumerate() {
-                if arc.head.contains(&node_index) {
+                if arc.tail.contains(&node_index) {
                     set_results.insert(index + self.nodes.len());
                 }
             }
@@ -59,7 +59,7 @@ impl<T: PartialEq + PartialOrd> Graph for DescriptiveDirectedHypergraph<T> {
             results
         } else {
             let real_index = node_index - self.nodes.len();
-            let results: Vec<usize> = self.arcs[real_index].tail.clone().into_iter().collect();
+            let results: Vec<usize> = self.arcs[real_index].head.clone().into_iter().collect();
 
             results
         }
