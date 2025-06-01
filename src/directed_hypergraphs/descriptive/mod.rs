@@ -41,6 +41,12 @@ impl<T: PartialEq + PartialOrd> From<LaplacianDirectedHypergraph<T>> for Descrip
     }
 }
 
+impl<T: Clone> Clone for DescriptiveDirectedHypergraph<T> {
+    fn clone(&self) -> Self {
+        Self { nodes: self.nodes.clone(), arcs: self.arcs.clone() }
+    }
+}
+
 impl<T: PartialEq + PartialOrd> Graph for DescriptiveDirectedHypergraph<T> {
     fn get_neighbors(&self, node_index: usize) -> Vec<usize> {
         if node_index < self.nodes.len() {

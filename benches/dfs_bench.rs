@@ -5,14 +5,9 @@ use criterion::{
     BenchmarkId
 };
 use rust_hypergraph::{
-    directed_hypergraphs::{
-        DirectedBipartiteGraph,
-        LaplacianDirectedHypergraph,
-        DescriptiveDirectedHypergraph,
-        BFDirectedHypergraph
-    },
-    algorithms::dfs,
-    Node
+    algorithms::dfs, directed_hypergraphs::{
+        BFDirectedHypergraph, BidirectionalHashMap, DescriptiveDirectedHypergraph, DirectedBipartiteGraph, LaplacianDirectedHypergraph
+    }, Node
 };
 use std::fs;
 
@@ -70,6 +65,7 @@ pub fn run_benchmarks(folder_name: &str, group_name: &str, c: &mut Criterion) {
         );
 
         let j = DescriptiveDirectedHypergraph::from(h);
+        let j2 = j.clone();
 
         group.bench_with_input(
             BenchmarkId::new("Descriptive", format!("Graph #{}", index)),
@@ -83,6 +79,14 @@ pub fn run_benchmarks(folder_name: &str, group_name: &str, c: &mut Criterion) {
             BenchmarkId::new("BF", format!("Graph #{}", index)),
             &k,
             |b, k| b.iter(|| dfs(k, 0))
+        );
+
+        let l = BidirectionalHashMap::from(j2);
+
+        group.bench_with_input(
+            BenchmarkId::new("Bidirectional", format!("Graph #{}", index)),
+            &l,
+            |b, l| b.iter(|| dfs(l, 0))
         );
     }
 }
